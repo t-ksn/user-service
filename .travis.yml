@@ -18,7 +18,7 @@ install:
 
 script:
 - make build
-- make test-all
+- make cover-all
 - make docker-build
 - make docker-test
 
