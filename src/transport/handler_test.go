@@ -131,7 +131,6 @@ func TestHandler_SignIn_ServiceExec_ReturnResult(t *testing.T) {
 		Token:     "access_token",
 		Refresh:   "refresh-tocken",
 		TokenType: "token_type",
-		ExpiredIn: 3600,
 	}
 
 	fService := &fakeService{}
