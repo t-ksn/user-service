@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/namsral/flag"
+
 	"github.com/t-ksn/core-kit"
 	"github.com/t-ksn/user-service/src/dependencies"
 	"github.com/t-ksn/user-service/src/service"
@@ -31,13 +32,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tm := dependencies.MakeTokenMaker(secreatKey)
-	bs := service.Make(us, ph, tm)
+	tg := dependencies.MakeTokenGenerator(secreatKey)
+	bs := service.Make(us, ph, tg)
 	h := transport.Make(bs)
 
-	cs := core.NewService(core.Name("user-service"),
-		core.Port(port),
-		core.Version(version))
+	cs := corekit.NewService(corekit.Name("user-service"),
+		corekit.Port(port),
+		corekit.Version(version))
 
 	cs.Post("/user", h.Register)
 	cs.Post("/login", h.SignIn)

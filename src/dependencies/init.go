@@ -18,6 +18,6 @@ func MakePasswordHasher() *PasswordHasher {
 	return &PasswordHasher{}
 }
 
-func MakeTokenMaker(seacretKey string) *TokenMaker {
+func MakeTokenGenerator(seacretKey string) *TokenMaker {
 	return &TokenMaker{secret: []byte(seacretKey)}
 }

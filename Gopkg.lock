@@ -77,7 +77,7 @@
   branch = "master"
   name = "github.com/t-ksn/core-kit"
   packages = [".","apierror"]
-  revision = "6e3da992f77281dd2152a00d3ea8a0bee894fdd6"
+  revision = "c01f7d3d9f7746b6d8aebc059e52d5a4892437e0"
 
 [[projects]]
   branch = "master"
