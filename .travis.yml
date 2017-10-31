@@ -20,10 +20,11 @@ script:
 - make build
 - make cover-all
 - make docker-build
-- make docker-test
+# - make docker-test
 
 after_success:
 - make docker-inspect
+- bash <(curl -s https://codecov.io/bash)
 
 # deploy:
 #   - provider: releases
