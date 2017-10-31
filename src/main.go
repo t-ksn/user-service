@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/namsral/flag"
+	"github.com/satori/go.uuid"
 
 	"github.com/t-ksn/core-kit"
 	"github.com/t-ksn/user-service/src/dependencies"
@@ -33,7 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 	tg := dependencies.MakeTokenGenerator(secreatKey)
-	bs := service.Make(us, ph, tg)
+	bs := service.Make(us, ph, tg, func() string { return uuid.NewV4().String() })
 	h := transport.Make(bs)
 
 	cs := corekit.NewService(corekit.Name("user-service"),

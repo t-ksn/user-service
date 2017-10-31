@@ -2,7 +2,7 @@ package service
 
 type CreateUserReq struct {
 	Name     string `json:"name"`
-	Password string `json:"passwrod"`
+	Password string `json:"password"`
 }
 
 type SignInReq struct {
@@ -13,5 +13,4 @@ type SignInResp struct {
 	Token     string `json:"tocken"`
 	Refresh   string `json:"refresh"`
 	TokenType string `json:"type"`
-	ExpiredIn int64  `json:"exp"`
 }

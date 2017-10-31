@@ -2,10 +2,8 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"github.com/pkg/errors"
-	"github.com/satori/go.uuid"
 	"github.com/t-ksn/core-kit/apierror"
 )
 
@@ -25,9 +23,10 @@ type TokenGenerator interface {
 }
 
 type Service struct {
-	storage   UserStorage
-	pwdHasher PasswordHasher
-	tokenG    TokenGenerator
+	storage    UserStorage
+	pwdHasher  PasswordHasher
+	tokenG     TokenGenerator
+	idGenerate func() string
 }
 
 func (s *Service) Register(ctx context.Context, req CreateUserReq) error {
@@ -35,22 +34,18 @@ func (s *Service) Register(ctx context.Context, req CreateUserReq) error {
 	if err == nil {
 		return ErrDuplicateName
 	}
-
 	if err != apierror.EntityNotFoundErr {
 		return errors.WithMessage(err, "Service.Register")
 	}
-
 	pwdHash, err := s.pwdHasher.Hash(req.Password)
 	if err != nil {
 		return errors.WithMessage(err, "Servcie.Register")
 	}
 
-	u := User{Name: req.Name, PasswordHash: pwdHash, ID: uuid.NewV4().String()}
+	u := User{Name: req.Name, PasswordHash: pwdHash, ID: s.idGenerate()}
 	err = s.storage.Add(ctx, u)
 	return errors.WithMessage(err, "Servcie.Register")
 }
-
-const tokenTTL = time.Hour
 
 func (s *Service) SignIn(ctx context.Context, req SignInReq) (SignInResp, error) {
 	u, err := s.storage.GetByName(ctx, req.Name)
@@ -60,14 +55,16 @@ func (s *Service) SignIn(ctx context.Context, req SignInReq) (SignInResp, error)
 	if err != nil {
 		return SignInResp{}, errors.WithMessage(err, "Service.SignIn")
 	}
-	exp := time.Now().UTC().Add(tokenTTL).Unix()
-	token, err := s.tokenG.Make(Token{UserID: u.ID, Exp: exp})
+	verified := s.pwdHasher.Verify(req.Password, u.PasswordHash)
+	if !verified {
+		return SignInResp{}, ErrUserNameOrPasswordIncorrect
+	}
+	token, err := s.tokenG.Make(Token{UserID: u.ID})
 	if err != nil {
 		return SignInResp{}, errors.WithMessage(err, "Service.SignIn")
 	}
 	return SignInResp{
 		Token:     token,
-		ExpiredIn: exp,
 		TokenType: "vchat",
 	}, nil
 
