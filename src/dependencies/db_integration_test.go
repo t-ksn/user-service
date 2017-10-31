@@ -1,0 +1,43 @@
+// +build integration
+
+package dependencies_test
+
+import (
+	"context"
+	"testing"
+
+	"github.com/satori/go.uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/t-ksn/core-kit/apierror"
+	"github.com/t-ksn/user-service/src/service"
+)
+
+func TestUserStorage_Add(t *testing.T) {
+	err := userStorage.Add(context.Background(), service.User{
+		Name:         "test_add_user_storage",
+		ID:           uuid.NewV4().String(),
+		PasswordHash: "1234",
+	})
+
+	assert.NoError(t, err)
+}
+
+func TestUserStorage_GetByName(t *testing.T) {
+	expected := service.User{
+		Name:         uuid.NewV4().String(),
+		ID:           uuid.NewV4().String(),
+		PasswordHash: "1234",
+	}
+	err := userStorage.Add(context.Background(), expected)
+	assert.NoError(t, err)
+
+	actual, err := userStorage.GetByName(context.Background(), expected.Name)
+
+	assert.NoError(t, err)
+	assert.Equal(t, expected, actual)
+}
+
+func TestUserStorage_GetByName_UserNotFound_ReturnNotFoundErr(t *testing.T) {
+	_, err := userStorage.GetByName(context.Background(), uuid.NewV4().String())
+	assert.Equal(t, apierror.EntityNotFoundErr, err)
+}
