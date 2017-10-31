@@ -4,6 +4,7 @@ DOCKERHUB_REPOSITORY=tochkaksn/$(IMAGENAME)
 VERSION?=$(shell git describe --tags --always)
 TARGET_OS ?= $(shell go env GOOS)
 GIT_BRANCH?=$(shell git symbolic-ref -q --short HEAD || git describe --tags --exact-match)
+PKG_LIST=$(shell go list ./src/...)
 
 BINARY?=app
 ifeq ($(TARGET_OS),windows)
@@ -26,26 +27,43 @@ BUILD_ARGS=--ldflags '$(LDF_FLAGS)'
 
 .DEFAULT_GOAL := build
 
-define tag_docker
-  @if [ "$(GIT_BRANCH)" = "master" ]; then \
-    docker tag $(IMAGENAME) $(1):latest; \
-  fi
-	@if [ "$(GIT_BRANCH)" = "develop" ]; then \
-    docker tag $(IMAGENAME) $(1):unstable; \
-  fi
-  @if [ "$(GIT_BRANCH)" != "master" && "$(GIT_BRANCH)" != "develop" ]; then \
-    docker tag $(IMAGENAME) $(1):$(GIT_BRANCH); \
-  fi
+# TEST SECTION
+.PHONY: test test-all cover cover-all
+
+define test
+  @go test $(1) ./src/...
 endef
 
-# TEST SECTION
-.PHONY: test test-all
+define cover
+	@echo "mode: set" > coverage.out
+	@for pkg in $(PKG_LIST) ; do \
+		go test $(1) -coverprofile=part.out $$pkg ; \
+		if [ -f part.out ]; \
+						then \
+								cat part.out | grep -v "mode: set" >>coverage.out ; \
+								rm -f part.out ; \
+						fi ;\
+	done
+endef
 
 test:
-	@go test ./src/...
+	$(call test)
 
 test-all:
-	@go test  -tags=integration ./src/...
+	$(call test , -tags=integration)
+
+cover:
+	$(call cover)
+
+cover-all:
+	$(call cover , -tags=integration)
+
+cover-html:
+	@go tool cover -html=coverage.out
+cover-show:
+	@go tool cover -func=coverage.out
+
+
 
 
 # BUILD SECTION
@@ -74,9 +92,20 @@ docker-rebuild: clean docker-build
 docker-build: $(BINARY)
 	@docker build -t $(IMAGENAME) --build-arg VERSION=$(VERSION) .
 
-docker-publish: docker-dockerhub-publish
 
-docker-dockerhub-publish:
+define tag_docker
+  @if [ "$(GIT_BRANCH)" = "master" ]; then \
+    docker tag $(IMAGENAME) $(1):latest; \
+  fi
+	@if [ "$(GIT_BRANCH)" = "develop" ]; then \
+    docker tag $(IMAGENAME) $(1):unstable; \
+  fi
+  @if [ "$(GIT_BRANCH)" != "master" && "$(GIT_BRANCH)" != "develop" ]; then \
+    docker tag $(IMAGENAME) $(1):$(GIT_BRANCH); \
+  fi
+endef
+
+docker-publish:
 	$(call tag_docker, $(DOCKERHUB_REPOSITORY))
 	docker push $(DOCKERHUB_REPOSITORY)
 
