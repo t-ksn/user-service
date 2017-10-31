@@ -9,7 +9,7 @@ var migrations = []func(db *mgo.Session) error{
 	create_user_index_by_name,
 }
 
-func applayMigration(db *mgo.Session) error {
+func applyMigrations(db *mgo.Session) error {
 	for _, m := range migrations {
 		err := m(db)
 		if err != nil {

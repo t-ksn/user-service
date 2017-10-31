@@ -7,7 +7,7 @@ func MakeUserStorage(dbConnectionStr string) (*MongoDBUserStorage, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = applayMigration(s)
+	err = applyMigrations(s)
 	if err != nil {
 		return nil, err
 	}
