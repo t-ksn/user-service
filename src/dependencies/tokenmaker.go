@@ -16,6 +16,8 @@ func init() {
 	}
 }
 
+const TokenExp = time.Hour
+
 type TokenMaker struct {
 	secret []byte
 }
@@ -23,7 +25,7 @@ type TokenMaker struct {
 func (m *TokenMaker) Make(t service.Token) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":  t.UserID,
-		"exp": t.Exp,
+		"exp": jwt.TimeFunc().Add(TokenExp).Unix(),
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
@@ -41,17 +43,13 @@ func (m *TokenMaker) Verify(tokenString string) (service.Token, error) {
 		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
 		return m.secret, nil
 	})
-	if err != nil {
-		return service.Token{}, errors.Wrap(err, "TokenMaker.Verify")
-	}
-
-	if token.Valid {
+	if err != nil || !token.Valid {
 		return service.Token{}, apierror.UnauthorizedRequestErr
 	}
+
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
 		t := service.Token{}
 		t.UserID, _ = claims["id"].(string)
-		t.Exp, _ = claims["exp"].(int64)
 		return t, nil
 	}
 

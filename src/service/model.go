@@ -8,5 +8,4 @@ type User struct {
 
 type Token struct {
 	UserID string
-	Exp    int64
 }
