@@ -1,0 +1,52 @@
+sudo: required
+dist: trusty
+
+language: go
+go: 1.8
+
+services:
+  - docker
+  - mongodb
+env:
+  - GIT_BRANCH=$TRAVIS_BRANCH
+
+# before_install:
+  # - docker login -u="$DOCKERHUB_USERNAME" -p="$DOCKERHUB_PASSWORD"
+
+install:
+- make get
+
+script:
+- make build
+- make test-all
+- make docker-build
+- make docker-test
+
+after_success:
+- make docker-inspect
+
+# deploy:
+#   - provider: releases
+#     api_key:
+#       secure: etk+gA68KgcsUbivOE/yjztvbwB3nEhSlXFxKvEb6h0uhFl3kUvlUfJXqVeuMGDaBI2GJg4ZSQgVVjNVNgdc3kNyr83zLrVE3L7+W5eR5aknySA/ZgMzNnsXkGIi8tKfu/LGP444W56rz+oR8eJ86JpGWw8DWmfee9v+QOr8orCgZS6WkN17u8sghPZnH0rFUsCWyeLTl1kzVS+o0Q3yq9hb52vrSFhlWoav8bhZnIUsYFp26HUwdHX2T2n7RmhTKrxNMuDUaofQ8rt1CSbcx7wkOQRQINGYb5dbkI7urrHMXFhOV/fltDc82xbgXyfrmRvQ+55VLXnzLVi1rWapPk84OlwzWIE6YJvx1xd4G32+tDqW3PGauVozvNufSeJCCL3LP691vHGn4bbxTAzxUkr4kiRtZhcONdXnwx9rhCSgk23863eu3ehZIPHA6LGECEZj7ABY/h4332TF5Uj+ucbhIgY2U31z9Z3pLKjQ6x2vybarBZhnkYgs37H0PcvqoWCdEVG/gDA6g6aFdOUXkovDJep1Qo3NhL8CiNzk/sEHQ1zaMjJjhkLjNTDL9Y9Q30oubM+J5urImqmmHXYBm0siO5iuPmGmiJ0zsIR1yaEJQ/3Acqv8vJuSQ3nnp5sUguFRU2pBdDqMw9CAWo0y4IFWrdlX6IEaJbcQVF3tp2M=
+#     skip_cleanup: true
+#     file_glob: true
+#     file: artf/*
+#     on:
+#       tags: true
+# # Update latest docker image
+#   - provider: script
+#     script: make docker-bintray-publish
+#     skip_cleanup: true
+# # Update unstable docker image
+#   - provider: script
+#     script: make docker-bintray-publish
+#     skip_cleanup: true
+#     on:
+#       branch: develop
+# # Publish tagged docker image
+#   - provider: script
+#     script: make docker-bintray-publish
+#     skip_cleanup: true
+#     on:
+#       tags: true
