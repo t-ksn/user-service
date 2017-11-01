@@ -22,12 +22,14 @@ var (
 )
 
 func init() {
-	flag.IntVar(&port, "port", 80, "Port of listening")
+	flag.IntVar(&port, "port", 8080, "Port of listening")
 	flag.StringVar(&dbConnectionStr, "db", "", "Database connection string")
 	flag.StringVar(&secreatKey, "key", "", "Secret key for sing JWT")
 }
 
 func main() {
+	flag.Parse()
+
 	ph := dependencies.MakePasswordHasher()
 	us, err := dependencies.MakeUserStorage(dbConnectionStr)
 	if err != nil {

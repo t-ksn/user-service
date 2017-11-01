@@ -81,7 +81,7 @@ get: $(GOPATH)/bin/dep
 build: get clean $(BINARY)
 
 $(BINARY):
-	@GOOS=$(TARGET_OS) go build  $(BUILD_ARGS) -o $(BINARY) ./src
+	GOOS=$(TARGET_OS) go build  $(BUILD_ARGS) -o $(BINARY) ./src
 
 
 # DOCKER SECTION
@@ -111,7 +111,6 @@ docker-publish:
 
 docker-up:
 	@docker-compose $(DOCKER_COMPOSE_OPTIONS) up -d
-	@sleep 15
 
 docker-down:
 	@docker-compose $(DOCKER_COMPOSE_OPTIONS) down
