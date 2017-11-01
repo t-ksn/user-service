@@ -24,7 +24,7 @@ var (
 func init() {
 	flag.IntVar(&port, "port", 80, "Port of listening")
 	flag.StringVar(&dbConnectionStr, "db", "", "Database connection string")
-	flag.StringVar(&secreatKey, "key", "", "Seacret key")
+	flag.StringVar(&secreatKey, "key", "", "Secret key for sing JWT")
 }
 
 func main() {
@@ -41,7 +41,7 @@ func main() {
 		corekit.Port(port),
 		corekit.Version(version))
 
-	cs.Post("/user", h.Register)
+	cs.Post("/account", h.Register)
 	cs.Post("/login", h.SignIn)
 
 	cs.Run()

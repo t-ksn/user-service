@@ -10,7 +10,7 @@ type SignInReq struct {
 	Password string `json:"password"`
 }
 type SignInResp struct {
-	Token     string `json:"tocken"`
+	Token     string `json:"token"`
 	Refresh   string `json:"refresh"`
 	TokenType string `json:"type"`
 }
