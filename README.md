@@ -29,7 +29,7 @@ CMD args (prefix: --)| Env name | Description
 ---|---|---
 db | DB | Connection string to MongoDB (`required`)|
 key | KEY | Secret key for sign JWT (`required`) |
-port | PORT | Listening port (`by default 80`)
+port | PORT | Listening port (`by default 8080`)
 
 ## Endpoints
 ### Register user account
