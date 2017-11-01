@@ -1,8 +1,11 @@
+ branch | status| coverage |
+ -------|-------|----------|
+ master| [![Build Status](https://travis-ci.org/t-ksn/user-service.svg?branch=master)](https://travis-ci.org/t-ksn/user-service)| [![codecov](https://codecov.io/gh/t-ksn/user-service/branch/master/graph/badge.svg)](https://codecov.io/gh/t-ksn/user-service)
 # User service
 The User service provide API for manage user account and join/leave group and company.
 
+# Table of content
 <!-- MDTOC maxdepth:6 firsth1:2 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
-
 - [Dependencies](#dependencies)   
 - [Settings](#settings)   
 - [Endpoints](#endpoints)   
