@@ -49,6 +49,8 @@ Success result return 201
 #### Errors
 ```
 100 - User name already exist
+102 - Minimum password length 4
+103 - User name is empty
 ```
 
 ### Authorization

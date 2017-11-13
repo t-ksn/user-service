@@ -30,6 +30,13 @@ type Service struct {
 }
 
 func (s *Service) Register(ctx context.Context, req CreateUserReq) error {
+	if len(req.Password) < 4 {
+		return ErrPasswordLessThen4Chars
+	}
+	if req.Name == "" {
+		return ErrUserNameIsEmpty
+	}
+
 	_, err := s.storage.GetByName(ctx, req.Name)
 	if err == nil {
 		return ErrDuplicateName

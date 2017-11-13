@@ -44,6 +44,18 @@
   version = "v1.7.4-pre"
 
 [[projects]]
+  name = "github.com/onsi/ginkgo"
+  packages = [".","config","internal/codelocation","internal/containernode","internal/failer","internal/leafnodes","internal/remote","internal/spec","internal/spec_iterator","internal/specrunner","internal/suite","internal/testingtproxy","internal/writer","reporters","reporters/stenographer","reporters/stenographer/support/go-colorable","reporters/stenographer/support/go-isatty","types"]
+  revision = "9eda700730cba42af70d53180f9dcce9266bc2bc"
+  version = "v1.4.0"
+
+[[projects]]
+  name = "github.com/onsi/gomega"
+  packages = [".","format","internal/assertion","internal/asyncassertion","internal/oraclematcher","internal/testingtsupport","matchers","matchers/support/goraph/bipartitegraph","matchers/support/goraph/edge","matchers/support/goraph/node","matchers/support/goraph/util","types"]
+  revision = "c893efa28eb45626cdaa76c9f653b62488858837"
+  version = "v1.2.0"
+
+[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
@@ -100,14 +112,32 @@
 [[projects]]
   branch = "master"
   name = "github.com/t-ksn/core-kit"
-  packages = [".","apierror"]
-  revision = "c01f7d3d9f7746b6d8aebc059e52d5a4892437e0"
+  packages = [".","apierror","debugclient","httpclient"]
+  revision = "f006713ab7535d9aa9a58e088bc0d5c53a512606"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["bcrypt","blowfish"]
-  revision = "2509b142fb2b797aa7587dad548f113b2c0f20ce"
+  revision = "bd6f299fb381e4c3393d1c4b1f0b94f5e77650c8"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["html","html/atom","html/charset"]
+  revision = "c73622c77280266305273cb545f54516ced95b93"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "95c6576299259db960f6c5b9b69ea52422860fce"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/text"
+  packages = ["encoding","encoding/charmap","encoding/htmlindex","encoding/internal","encoding/internal/identifier","encoding/japanese","encoding/korean","encoding/simplifiedchinese","encoding/traditionalchinese","encoding/unicode","internal/gen","internal/tag","internal/utf8internal","language","runes","transform","unicode/cldr"]
+  revision = "3cfc6c0d6bf80d724d98c26c4822f4a35d37598e"
 
 [[projects]]
   name = "gopkg.in/dgrijalva/jwt-go.v3"
@@ -121,9 +151,15 @@
   packages = [".","bson","internal/json","internal/sasl","internal/scram"]
   revision = "3f83fa5005286a7fe593b055f0d7771a7dce4655"
 
+[[projects]]
+  branch = "v2"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  revision = "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d64db1c401d5ae95d09ad74f214cd80466914fc5a3657a3a30c8c333e970193c"
+  inputs-digest = "81ea88b9eff7923a49d219b2df6f51b474b98e0b93597d60c37be6faf06ea59c"
   solver-name = "gps-cdcl"
   solver-version = 1

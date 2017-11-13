@@ -20,6 +20,26 @@ func TestService_Register_Seccess_ReturnNil(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestService_Register_PasswordLessThen4Chars_ReturnErrPasswordLessThen4Chars(t *testing.T) {
+	serviceEnv := makeServiceEnv()
+	callEnv := setupServcieRegisterEnv(serviceEnv)
+	callEnv.Request.Password = "123"
+
+	err := serviceEnv.Service.Register(context.Background(), callEnv.Request)
+
+	assert.Equal(t, service.ErrPasswordLessThen4Chars, err)
+}
+
+func TestService_Register_UserNameIsEmpty_ReturnErrUserNameIsEmpty(t *testing.T) {
+	serviceEnv := makeServiceEnv()
+	callEnv := setupServcieRegisterEnv(serviceEnv)
+	callEnv.Request.Name = ""
+
+	err := serviceEnv.Service.Register(context.Background(), callEnv.Request)
+
+	assert.Equal(t, service.ErrUserNameIsEmpty, err)
+}
+
 func TestService_Register_DuplicateName_ReturnErrDuplicateName(t *testing.T) {
 	serviceEnv := makeServiceEnv()
 	serviceEnv.storage.

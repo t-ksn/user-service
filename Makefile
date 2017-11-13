@@ -123,4 +123,4 @@ docker-inspect:
 .PHONY: service-test
 
 service-test:
-	@go test ./service-test -v
+	@ginkgo -v ./service-test

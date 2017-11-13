@@ -18,4 +18,14 @@ var (
 		Message:    "User name or password incorrect",
 		StatusCode: http.StatusBadRequest,
 	}
+	ErrPasswordLessThen4Chars = apierror.APIError{
+		Code:       102,
+		Message:    "Minimum password length 4",
+		StatusCode: http.StatusBadRequest,
+	}
+	ErrUserNameIsEmpty = apierror.APIError{
+		Code:       103,
+		Message:    "User name is empty",
+		StatusCode: http.StatusBadRequest,
+	}
 )

@@ -1,6 +1,8 @@
 package dependencies
 
-import "gopkg.in/mgo.v2"
+import (
+	"gopkg.in/mgo.v2"
+)
 
 func MakeUserStorage(dbConnectionStr string) (*MongoDBUserStorage, error) {
 	s, err := mgo.Dial(dbConnectionStr)
