@@ -14,3 +14,13 @@ type SignInResp struct {
 	Refresh   string `json:"refresh"`
 	TokenType string `json:"type"`
 }
+
+type Join2Req struct {
+	Token   string `json:"token"`
+	UnionID string `json:"union_id"`
+}
+
+type LeaveReq struct {
+	Token   string `json:"token"`
+	UnionID string `json:"union_id"`
+}

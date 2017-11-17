@@ -28,6 +28,11 @@ func (f *fakeService) SignIn(ctx context.Context, req service.SignInReq) (servic
 	return args.Get(0).(service.SignInResp), args.Error(1)
 }
 
+func (f *fakeService) Join(ctx context.Context, req service.Join2Req) error {
+	args := f.Called(req)
+	return args.Error(0)
+}
+
 type BrokenBodyReader struct{}
 
 func (r BrokenBodyReader) Read(p []byte) (n int, err error) {

@@ -14,10 +14,26 @@ type fakeUserStorage struct {
 
 func (f *fakeUserStorage) GetByName(ctx context.Context, name string) (service.User, error) {
 	args := f.Called(name)
+	if fakeF, ok := args.Get(0).(func() service.User); ok {
+		return fakeF(), args.Error(1)
+	}
 	return args.Get(0).(service.User), args.Error(1)
 }
 
 func (f *fakeUserStorage) Add(ctx context.Context, user service.User) error {
+	args := f.Called(user)
+	return args.Error(0)
+}
+
+func (f *fakeUserStorage) Get(ctx context.Context, id string) (service.User, error) {
+	args := f.Called(id)
+	if fakeF, ok := args.Get(0).(func() service.User); ok {
+		return fakeF(), args.Error(1)
+	}
+	return args.Get(0).(service.User), args.Error(1)
+}
+
+func (f *fakeUserStorage) Update(ctx context.Context, user service.User) error {
 	args := f.Called(user)
 	return args.Error(0)
 }
@@ -75,8 +91,8 @@ type serviceRegisterCallEnv struct {
 	User    service.User
 }
 
-func setupServcieRegisterEnv(se serviceEnv) serviceRegisterCallEnv {
-	result := serviceRegisterCallEnv{
+func setupServcieRegisterEnv(se serviceEnv) *serviceRegisterCallEnv {
+	result := &serviceRegisterCallEnv{
 		Request: service.CreateUserReq{
 			Name:     "new user name",
 			Password: "1234",
@@ -107,8 +123,8 @@ type serviceSignInEnv struct {
 	User    service.User
 }
 
-func setupServcieSignInEnv(se serviceEnv) serviceSignInEnv {
-	result := serviceSignInEnv{
+func setupServcieSignInEnv(se serviceEnv) *serviceSignInEnv {
+	result := &serviceSignInEnv{
 		Request: service.SignInReq{
 			Name:     "user name",
 			Password: "1234",
@@ -129,6 +145,44 @@ func setupServcieSignInEnv(se serviceEnv) serviceSignInEnv {
 	se.tokenG.
 		On("Make", service.Token{UserID: result.User.ID}).
 		Return(result.Token, nil)
+
+	return result
+}
+
+type serviceJoinEnv struct {
+	Request    service.Join2Req
+	UserBefore service.User
+	UserAfter  service.User
+}
+
+func setupServcieJoinEnv(se serviceEnv) *serviceJoinEnv {
+	result := &serviceJoinEnv{
+		Request: service.Join2Req{
+			Token:   "user token",
+			UnionID: "group id",
+		},
+		UserBefore: service.User{
+			ID:   se.idGenerate(),
+			Name: "user name",
+		},
+		UserAfter: service.User{
+			ID:       se.idGenerate(),
+			Name:     "user name",
+			GroupIDs: []string{"group id"},
+		},
+	}
+	se.tokenG.
+		On("Verify", result.Request.Token).
+		Return(service.Token{UserID: result.UserBefore.ID}, nil)
+
+	se.storage.
+		On("Get", result.UserBefore.ID).
+		Return(func() service.User {
+			return result.UserBefore
+		}, nil)
+	se.storage.
+		On("Update", result.UserAfter).
+		Return(nil)
 
 	return result
 }

@@ -28,4 +28,9 @@ var (
 		Message:    "User name is empty",
 		StatusCode: http.StatusBadRequest,
 	}
+	ErrUnionIDDuplicated = apierror.APIError{
+		Code:       104,
+		Message:    "User already joined to union id",
+		StatusCode: http.StatusBadRequest,
+	}
 )

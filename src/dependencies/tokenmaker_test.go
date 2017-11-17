@@ -1,7 +1,6 @@
 package dependencies_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -35,7 +34,6 @@ func TestTokenMaker_Verify_SendTokenWithOtherSecretSign_ReturnErr(t *testing.T) 
 	newTm := dependencies.MakeTokenGenerator("my new secret")
 	_, err = newTm.Verify(token)
 
-	fmt.Println(err)
 	assert.Equal(t, apierror.UnauthorizedRequestErr, err)
 }
 
@@ -43,6 +41,5 @@ func TestTokenMaker_Verify_a_ReturnErr(t *testing.T) {
 	tm := dependencies.MakeTokenGenerator("my secret")
 	_, err := tm.Verify("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ")
 
-	fmt.Println(err)
 	assert.Equal(t, apierror.UnauthorizedRequestErr, err)
 }

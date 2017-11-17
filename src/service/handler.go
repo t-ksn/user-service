@@ -9,7 +9,10 @@ import (
 
 type UserStorage interface {
 	GetByName(ctx context.Context, name string) (User, error)
+	Get(ctx context.Context, id string) (User, error)
+
 	Add(ctx context.Context, user User) error
+	Update(ctx context.Context, user User) error
 }
 
 type PasswordHasher interface {
@@ -74,5 +77,27 @@ func (s *Service) SignIn(ctx context.Context, req SignInReq) (SignInResp, error)
 		Token:     token,
 		TokenType: "vchat",
 	}, nil
+}
 
+func (s *Service) Join(ctx context.Context, req Join2Req) error {
+	token, err := s.tokenG.Verify(req.Token)
+	if err != nil {
+		return apierror.UnauthorizedRequestErr
+	}
+
+	user, err := s.storage.Get(ctx, token.UserID)
+	if err != nil {
+		return errors.WithMessage(err, "Service.Join2Group")
+	}
+
+	for i := 0; i < len(user.GroupIDs); i++ {
+		if user.GroupIDs[i] == req.UnionID {
+			return ErrUnionIDDuplicated
+		}
+	}
+
+	user.GroupIDs = append(user.GroupIDs, req.UnionID)
+	err = s.storage.Update(ctx, user)
+
+	return errors.WithMessage(err, "Service.Join2Group")
 }

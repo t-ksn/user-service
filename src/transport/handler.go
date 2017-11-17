@@ -14,6 +14,7 @@ import (
 type Service interface {
 	Register(ctx context.Context, req service.CreateUserReq) error
 	SignIn(ctx context.Context, req service.SignInReq) (service.SignInResp, error)
+	Join(ctx context.Context, req service.Join2Req) error
 }
 
 type Handler struct {
@@ -37,6 +38,15 @@ func (h *Handler) SignIn(req *http.Request) (interface{}, error) {
 		return nil, err
 	}
 	return h.servcie.SignIn(req.Context(), obj)
+}
+
+func (h *Handler) Joun(req *http.Request) (interface{}, error) {
+	var obj service.Join2Req
+	err := unmarshal(req.Body, &obj)
+	if err != nil {
+		return nil, err
+	}
+	return nil, h.servcie.Join(req.Context(), obj)
 }
 
 func unmarshal(reader io.Reader, obj interface{}) error {

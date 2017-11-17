@@ -158,3 +158,71 @@ func TestService_SignIn_Seccess_ReturnVal(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, expected, resp)
 }
+
+func TestService_Join_Seccess_RetrunNil(t *testing.T) {
+	serviceEnv := makeServiceEnv()
+	callEnv := setupServcieJoinEnv(serviceEnv)
+
+	err := serviceEnv.Service.Join(context.Background(), callEnv.Request)
+
+	assert.NoError(t, err)
+}
+
+func TestService_Join_Seccess_UserUpdated(t *testing.T) {
+	serviceEnv := makeServiceEnv()
+	callEnv := setupServcieJoinEnv(serviceEnv)
+
+	serviceEnv.Service.Join(context.Background(), callEnv.Request)
+
+	serviceEnv.storage.AssertCalled(t, "Update", callEnv.UserAfter)
+}
+
+func TestService_Join_TokenInvalid_ReturnUnauthorizedRequestErr(t *testing.T) {
+	serviceEnv := makeServiceEnv()
+	serviceEnv.tokenG.
+		On("Verify", mock.Anything).
+		Return(service.Token{}, apierror.UnauthorizedRequestErr)
+
+	callEnv := setupServcieJoinEnv(serviceEnv)
+
+	err := serviceEnv.Service.Join(context.Background(), callEnv.Request)
+
+	assert.Equal(t, apierror.UnauthorizedRequestErr, err)
+}
+
+func TestService_Join_StorageGetReturnErr_ReturnErr(t *testing.T) {
+	serviceEnv := makeServiceEnv()
+	serviceEnv.storage.
+		On("Get", mock.Anything).
+		Return(service.User{}, fmt.Errorf("some error"))
+
+	callEnv := setupServcieJoinEnv(serviceEnv)
+
+	err := serviceEnv.Service.Join(context.Background(), callEnv.Request)
+
+	assert.Error(t, err)
+}
+
+func TestService_Join_GroupIDDuplicated_ReturnErrUnionIDDuplicated(t *testing.T) {
+	serviceEnv := makeServiceEnv()
+
+	callEnv := setupServcieJoinEnv(serviceEnv)
+	callEnv.UserBefore.GroupIDs = append(callEnv.UserBefore.GroupIDs, callEnv.Request.UnionID)
+
+	err := serviceEnv.Service.Join(context.Background(), callEnv.Request)
+
+	assert.Equal(t, service.ErrUnionIDDuplicated, err)
+}
+
+func TestService_Join_StorageUpdateReturnErr_ReturnErr(t *testing.T) {
+	serviceEnv := makeServiceEnv()
+	serviceEnv.storage.
+		On("Update", mock.Anything).
+		Return(fmt.Errorf("some error"))
+
+	callEnv := setupServcieJoinEnv(serviceEnv)
+
+	err := serviceEnv.Service.Join(context.Background(), callEnv.Request)
+
+	assert.Error(t, err)
+}
